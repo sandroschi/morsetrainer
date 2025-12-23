@@ -29,69 +29,28 @@ func main() {
 
 	for _, symbol := range symbols {
 		symbolLength := getSymbolLength(symbol, config)
-		//symbolEnd := time.Now().Add(symbolLength)
 
-		// for time.Now().Before(symbolEnd) {
-		// 	for i := 0; i < len(buf)/2; i++ {
-		// 		var sample float64
-		// 		if symbol == Dot || symbol == Dash {
-		// 			sample = (math.Sin(2*math.Pi*config.Frequency1*t) +
-		// 				math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5
-		// 		} else {
-		// 			sample = 0
-		// 		}
-
-		// 		v := int16(sample * 32767)
-		// 		buf[2*i] = byte(v)
-		// 		buf[2*i+1] = byte(v >> 8)
-		// 		t += 1.0 / sampleRate
-		// 	}
-		// 	player.Write(buf)
-		// }
 		t = 0
 		for start := time.Now(); time.Since(start) < symbolLength; {
 			if symbol == Dot || symbol == Dash {
 				timeRemaining := symbolLength - time.Since(start)
-
+				fading := 1.0
 				if timeRemaining < fadeOutDuration {
-					// Apply fade out
-					fadeOutFactor := float64(timeRemaining) / float64(fadeOutDuration)
-					for i := 0; i < len(buf)/2; i++ {
-						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fadeOutFactor
-
-						v := int16(sample * 32767)
-						buf[2*i] = byte(v)
-						buf[2*i+1] = byte(v >> 8)
-						t += 1.0 / sampleRate
-					}
-					player.Write(buf)
+					fading = float64(timeRemaining) / float64(fadeOutDuration)
 				} else if time.Since(start) < fadeInDuration {
-					// Apply fade in
-					fadeInFactor := float64(time.Since(start)) / float64(fadeInDuration)
-					for i := 0; i < len(buf)/2; i++ {
-						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fadeInFactor
-
-						v := int16(sample * 32767)
-						buf[2*i] = byte(v)
-						buf[2*i+1] = byte(v >> 8)
-						t += 1.0 / sampleRate
-					}
-					player.Write(buf)
-				} else {
-					// Normal sound
-					for i := 0; i < len(buf)/2; i++ {
-						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume
-
-						v := int16(sample * 32767)
-						buf[2*i] = byte(v)
-						buf[2*i+1] = byte(v >> 8)
-						t += 1.0 / sampleRate
-					}
-					player.Write(buf)
+					fading = float64(time.Since(start)) / float64(fadeInDuration)
 				}
+
+				for i := 0; i < len(buf)/2; i++ {
+					sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
+						math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fading
+
+					v := int16(sample * 32767)
+					buf[2*i] = byte(v)
+					buf[2*i+1] = byte(v >> 8)
+					t += 1.0 / sampleRate
+				}
+				player.Write(buf)
 			}
 		}
 	}
