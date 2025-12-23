@@ -115,7 +115,7 @@ func makeGroupsOfFive(characters []MorseCharacter) []MorseSymbol {
 	result = append(result, []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, WordSpace, WordSpace}...)
 
 	for i, char := range characters {
-		if i > 0 && i%5 == 0 {
+		if i > 0 && (i+1)%5 == 0 {
 			result = append(result, char.symbols...)
 			result = append(result, WordSpace)
 		} else {
@@ -125,7 +125,7 @@ func makeGroupsOfFive(characters []MorseCharacter) []MorseSymbol {
 	}
 
 	// End sequence: .-.-.
-	result = append(result, []MorseSymbol{Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot}...)
+	result = append(result, []MorseSymbol{Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace}...)
 
 	return result
 }

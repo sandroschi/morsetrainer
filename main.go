@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"math"
-	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -11,69 +13,110 @@ import (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-	const sampleRate = 44100
 	var config = read_config()
+	var sampleRate = config.SampleRate
 	var morse = NewMorseCharacterPool(config)
 
-	ctx, _ := oto.NewContext(sampleRate, 1, 2, 100)
+	ctx, _ := oto.NewContext((int)(sampleRate), 1, 2, 10)
 	player := ctx.NewPlayer()
 	defer player.Close()
+
+	reader := bufio.NewReader(os.Stdin)
+	var input string = "j"
+
 	var t float64
-	buf := make([]byte, 1024)
-	fadeOutDuration := time.Duration(float64(time.Millisecond) * 5)
-	fadeInDuration := time.Duration(float64(time.Millisecond) * 5)
+	fadeOutDuration := time.Duration(float64(time.Millisecond) * config.FadeOutDuration)
+	fadeInDuration := time.Duration(float64(time.Millisecond) * config.FadeInDuration)
+	fadeOutDeadSamples := config.FadeOutDeadSamples
+	fadeInDeadSamples := config.FadeInDeadSamples
 
-	characters := morse.GetRandomCharacters(config.CharacterCount)
-	symbols := makeGroupsOfFive(characters)
+	for input == "j" {
+		characters := morse.GetRandomCharacters(config.CharacterCount)
+		symbols := makeGroupsOfFive(characters)
 
-	for _, symbol := range symbols {
-		symbolLength := getSymbolLength(symbol, config)
+		// Debug clipping
+		// f, _ := os.Create("/tmp/yourfile")
+		// defer f.Close()
+		// w := bufio.NewWriter(f)
 
-		t = 0
-		for start := time.Now(); time.Since(start) < symbolLength; {
-			if symbol == Dot || symbol == Dash {
-				timeRemaining := symbolLength - time.Since(start)
-				fading := 1.0
-				if timeRemaining < fadeOutDuration {
-					fading = float64(timeRemaining) / float64(fadeOutDuration)
-				} else if time.Since(start) < fadeInDuration {
-					fading = float64(time.Since(start)) / float64(fadeInDuration)
+		for _, symbol := range symbols {
+			symbolLength := getSymbolLength(symbol, config)
+
+			t = 0.0
+			sample := 0.0
+
+			for start := time.Now(); time.Since(start) < symbolLength; {
+				if symbol == Dot || symbol == Dash {
+					samplesToWrite := int(sampleRate * float64(symbolLength) / float64(time.Second))
+					buf := make([]byte, samplesToWrite*2+fadeInDeadSamples+fadeOutDeadSamples) // A buffer to hold all samples for this symbol - 2 bytes per sample
+					fadeInSamples := int(float64(sampleRate) * float64(fadeInDuration) / float64(time.Second))
+					fadeOutSamples := int(float64(sampleRate) * float64(fadeOutDuration) / float64(time.Second))
+
+					for i := 0; i < fadeInDeadSamples; i++ {
+						buf[i] = 0
+					}
+
+					// Generate samples
+					for i := 0; i < samplesToWrite; i++ {
+						// Fading effect
+						fading := 1.0
+						if i < fadeInSamples {
+							fading = float64(i) / float64(fadeInSamples)
+						} else if i >= samplesToWrite-fadeOutSamples {
+							fading = float64(samplesToWrite-i) / float64(fadeOutSamples)
+						}
+
+						// Generate sample
+						sample = (math.Sin(2*math.Pi*config.Frequency1*t) +
+							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fading
+
+						v := int16(sample * 32767)
+						//_, _ = fmt.Fprintf(w, "%d\n", v)
+						buf[fadeInDeadSamples+2*i] = byte(v)
+						buf[fadeInDeadSamples+2*i+1] = byte(v >> 8)
+						t += 1.0 / sampleRate
+					}
+					for i := 0; i < fadeOutDeadSamples; i++ {
+						buf[fadeInDeadSamples+samplesToWrite*2+i] = 0
+					}
+					player.Write(buf) // Blocks until rest of buffer fits into internal buffer
+					break
+				} else {
+					time.Sleep(symbolLength)
+					break
 				}
+			}
 
-				for i := 0; i < len(buf)/2; i++ {
-					sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-						math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fading
+			// //println(symbolLength) // Dash = 225ms, Dot = 75ms
+			// fmt.Fprintf(w, "Ende")
+			// w.Flush()
+		}
 
-					v := int16(sample * 32767)
-					buf[2*i] = byte(v)
-					buf[2*i+1] = byte(v >> 8)
-					t += 1.0 / sampleRate
-				}
-				player.Write(buf)
+		// Print characters to console
+		for i, char := range characters {
+			// Print character as lowercase
+			print((strings.ToLower(string(char.character))))
+			if i > 0 && (i+1)%5 == 0 {
+				print(" ")
 			}
 		}
-	}
+		println()
 
-	// Print characters to console
-	for i, char := range characters {
-		// Print character as lowercase
-		print((strings.ToLower(string(char.character))))
-		if i > 0 && (i+1)%5 == 0 {
-			print(" ")
+		// Print statistic to console how often each character appeared
+		if config.PrintStatistics {
+			charCount := make(map[rune]int)
+			for _, char := range characters {
+				charCount[char.character]++
+			}
+			println("Character statistics:")
+			for char, count := range charCount {
+				println(string(char) + ": " + strconv.Itoa(count))
+			}
 		}
-	}
-	println()
 
-	// Print statistic to console how often each character appeared
-	if config.PrintStatistics {
-		charCount := make(map[rune]int)
-		for _, char := range characters {
-			charCount[char.character]++
-		}
-		println("Character statistics:")
-		for char, count := range charCount {
-			println(string(char) + ": " + strconv.Itoa(count))
-		}
+		// Ask user if he want to another run
+		fmt.Print("Nochmal? (j/n): ")
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(strings.ToLower(input))
 	}
 }
