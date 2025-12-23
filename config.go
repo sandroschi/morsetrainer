@@ -11,6 +11,7 @@ type Config struct {
 	WPM                    int
 	Frequency1             float64
 	Frequency2             float64
+	Volume                 float64
 	CharacterSpacingFactor float64
 	WordSpacingFactor      float64
 	Characters             string

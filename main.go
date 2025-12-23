@@ -16,12 +16,13 @@ func main() {
 	var config = read_config()
 	var morse = NewMorseCharacterPool(config)
 
-	ctx, _ := oto.NewContext(sampleRate, 1, 2, 0)
+	ctx, _ := oto.NewContext(sampleRate, 1, 2, 100)
 	player := ctx.NewPlayer()
 	defer player.Close()
 	var t float64
 	buf := make([]byte, 1024)
-	fadeOutDuration := time.Duration(float64(time.Millisecond) * 20)
+	fadeOutDuration := time.Duration(float64(time.Millisecond) * 5)
+	fadeInDuration := time.Duration(float64(time.Millisecond) * 5)
 
 	characters := morse.GetRandomCharacters(config.CharacterCount)
 	symbols := makeGroupsOfFive(characters)
@@ -57,7 +58,20 @@ func main() {
 					fadeOutFactor := float64(timeRemaining) / float64(fadeOutDuration)
 					for i := 0; i < len(buf)/2; i++ {
 						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * fadeOutFactor
+							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fadeOutFactor
+
+						v := int16(sample * 32767)
+						buf[2*i] = byte(v)
+						buf[2*i+1] = byte(v >> 8)
+						t += 1.0 / sampleRate
+					}
+					player.Write(buf)
+				} else if time.Since(start) < fadeInDuration {
+					// Apply fade in
+					fadeInFactor := float64(time.Since(start)) / float64(fadeInDuration)
+					for i := 0; i < len(buf)/2; i++ {
+						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
+							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fadeInFactor
 
 						v := int16(sample * 32767)
 						buf[2*i] = byte(v)
@@ -69,7 +83,7 @@ func main() {
 					// Normal sound
 					for i := 0; i < len(buf)/2; i++ {
 						sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5
+							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume
 
 						v := int16(sample * 32767)
 						buf[2*i] = byte(v)
@@ -78,17 +92,6 @@ func main() {
 					}
 					player.Write(buf)
 				}
-
-				// for i := 0; i < len(buf)/2; i++ {
-				// 	sample := (math.Sin(2*math.Pi*config.Frequency1*t) +
-				// 		math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5
-
-				// 	v := int16(sample * 32767)
-				// 	buf[2*i] = byte(v)
-				// 	buf[2*i+1] = byte(v >> 8)
-				// 	t += 1.0 / sampleRate
-				// }
-				// player.Write(buf)
 			}
 		}
 	}
