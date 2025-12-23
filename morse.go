@@ -112,7 +112,7 @@ func makeGroupsOfFive(characters []MorseCharacter) []MorseSymbol {
 	var result []MorseSymbol
 
 	// Start sequence: -.-.-
-	result = append(result, []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, WordSpace, WordSpace}...)
+	result = append(result, []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, WordSpace}...)
 
 	for i, char := range characters {
 		if i > 0 && (i+1)%5 == 0 {

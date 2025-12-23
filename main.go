@@ -17,7 +17,7 @@ func main() {
 	var sampleRate = config.SampleRate
 	var morse = NewMorseCharacterPool(config)
 
-	ctx, _ := oto.NewContext((int)(sampleRate), 1, 2, 10)
+	ctx, _ := oto.NewContext((int)(sampleRate), 1, 2, 0)
 	player := ctx.NewPlayer()
 	defer player.Close()
 
@@ -48,12 +48,20 @@ func main() {
 			for start := time.Now(); time.Since(start) < symbolLength; {
 				if symbol == Dot || symbol == Dash {
 					samplesToWrite := int(sampleRate * float64(symbolLength) / float64(time.Second))
-					buf := make([]byte, samplesToWrite*2+fadeInDeadSamples+fadeOutDeadSamples) // A buffer to hold all samples for this symbol - 2 bytes per sample
+					buf := make([]byte, samplesToWrite*2+fadeInDeadSamples*2+fadeOutDeadSamples*2) // A buffer to hold all samples for this symbol - 2 bytes per sample
 					fadeInSamples := int(float64(sampleRate) * float64(fadeInDuration) / float64(time.Second))
 					fadeOutSamples := int(float64(sampleRate) * float64(fadeOutDuration) / float64(time.Second))
+					var frequency float64
+					if symbol == Dot {
+						frequency = config.Frequency1
+					} else {
+						frequency = config.Frequency2
+					}
 
+					// Dead samples help with clipping
 					for i := 0; i < fadeInDeadSamples; i++ {
-						buf[i] = 0
+						buf[2*i] = 0
+						buf[2*i+1] = 0
 					}
 
 					// Generate samples
@@ -67,8 +75,7 @@ func main() {
 						}
 
 						// Generate sample
-						sample = (math.Sin(2*math.Pi*config.Frequency1*t) +
-							math.Sin(2*math.Pi*config.Frequency2*t)) * 0.5 * config.Volume * fading
+						sample = math.Sin(2*math.Pi*frequency*t) * config.Volume * fading
 
 						v := int16(sample * 32767)
 						//_, _ = fmt.Fprintf(w, "%d\n", v)
@@ -76,8 +83,11 @@ func main() {
 						buf[fadeInDeadSamples+2*i+1] = byte(v >> 8)
 						t += 1.0 / sampleRate
 					}
+
+					// Dead samples help with clipping
 					for i := 0; i < fadeOutDeadSamples; i++ {
-						buf[fadeInDeadSamples+samplesToWrite*2+i] = 0
+						buf[fadeInDeadSamples*2+samplesToWrite*2+i*2] = 0
+						buf[fadeInDeadSamples*2+samplesToWrite*2+i*2+1] = 0
 					}
 					player.Write(buf) // Blocks until rest of buffer fits into internal buffer
 					break
@@ -116,7 +126,7 @@ func main() {
 
 		// Ask user if he want to another run
 		fmt.Print("Nochmal? (j/n): ")
-		input, _ := reader.ReadString('\n')
+		input, _ = reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
 	}
 }
