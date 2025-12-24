@@ -7,7 +7,7 @@ WordSpacingFactor = 5
 
 # Zu benutzende Zeichen
 Characters = "ACDEILNOQRSTUX4590="
-CharacterCount = 100
+CharacterCount = 1000
 
 # Für Intensiv-Training können hier Zeichen angegeben werden, die verstärkt geübt werden sollen
 IntensiveCharacters = "4U5SX="
@@ -25,3 +25,4 @@ FadeInDeadSamples = 300
 FadeOutDeadSamples = 300
 
 ShowTrainingDuration = true
+DebugWaveForm = true

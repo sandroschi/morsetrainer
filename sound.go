@@ -1,20 +1,37 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"math"
+	"os"
 	"time"
 )
 
 func sample(symbols []MorseSymbol, config Config) []byte {
-	var totalLength int64 = 0
+	// Debug wave form
+	var f *os.File
+	var w *bufio.Writer
+	if config.DebugWaveForm {
+		f, _ = os.Create("/tmp/waveform")
+		w = bufio.NewWriter(f)
+	}
+	defer func() {
+		if f != nil {
+			f.Close()
+		}
+	}()
+	dotWritten := false
+
 	// Get total length in microseconds
+	var totalLength int64 = 0
 	for _, symbol := range symbols {
 		symbolLength := getSymbolLength(symbol, config)
 		totalLength += symbolLength.Microseconds()
 	}
 	// Total length in samples
 	totalLength = (totalLength * (int64(config.SampleRate))) / 1000000
-	buffer := make([]byte, 2*totalLength+1)
+	buffer := make([]byte, 2*totalLength)
 	var bufferIndex int64 = 0
 
 	for _, symbol := range symbols {
@@ -25,8 +42,11 @@ func sample(symbols []MorseSymbol, config Config) []byte {
 		sample := 0.0
 
 		if symbol == Dot || symbol == Dash {
-			fadeInSamples := int(float64(config.SampleRate) * float64(config.FadeInDuration) / float64(time.Second))
-			fadeOutSamples := int(float64(config.SampleRate) * float64(config.FadeOutDuration) / float64(time.Second))
+			// Fading sample count
+			fadeInSamples := int(float64(config.SampleRate) * float64(config.FadeInDuration * 1_000_000) / float64(time.Second))
+			fadeOutSamples := int(float64(config.SampleRate) * float64(config.FadeOutDuration * 1_000_000) / float64(time.Second))
+
+			// Frequency
 			var frequency float64
 			if symbol == Dot {
 				frequency = config.Frequency1
@@ -48,11 +68,18 @@ func sample(symbols []MorseSymbol, config Config) []byte {
 				sample = math.Sin(2*math.Pi*frequency*t) * config.Volume * fading
 
 				v := int16(sample * 32767)
-				//_, _ = fmt.Fprintf(w, "%d\n", v)
 				buffer[bufferIndex] = byte(v)
 				buffer[bufferIndex+1] = byte(v >> 8)
 				bufferIndex += 2
 				t += 1.0 / config.SampleRate
+
+				// Debug wave form
+				if symbol == Dot && !dotWritten && config.DebugWaveForm {
+					_, _ = fmt.Fprintf(w, "%d\n", v)
+				}
+			}
+			if symbol == Dot {
+				dotWritten = true
 			}
 		} else {
 			// Generate samples
@@ -62,10 +89,10 @@ func sample(symbols []MorseSymbol, config Config) []byte {
 				bufferIndex += 2
 			}
 		}
+	}
 
-		// //println(symbolLength) // Dash = 225ms, Dot = 75ms
-		// fmt.Fprintf(w, "Ende")
-		// w.Flush()
+	if config.DebugWaveForm {
+		w.Flush()
 	}
 
 	return buffer
