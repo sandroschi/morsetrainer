@@ -1,6 +1,9 @@
 # Morsetrainer
 Es gibt schier unendlich viele Programme, die einem dabei helfen sollen Morsen zu lernen. Jetzt ist es noch eins mehr.
 
+## Installation
+Wenn man nicht selbst kompilieren möchte, dann [hier](https://github.com/sandroschi/morsetrainer/releases) die aktuelle Version für Windows (ungetestet) oder Linux herunterladen. Eine richtige Installation ist nicht erforderlich. Es wird nur die ausführbare Datei und die config.toml in einem Ordner mit Leserechten benötigt.
+
 ## Verwendung
 Es ist ein Konsolenprogramm, also gerne in der Konsole starten. Es werden keine Parameter unterstützt. Alle Einstellungen sind in der config.toml zu tätigen, die im gleichen Verzeichnis wie die Executable liegen muss.
 
