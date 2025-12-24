@@ -79,7 +79,8 @@ func NewMorseCharacterPool(config Config) *MorseCharacterPool {
 			}
 		}
 	}
-	for _, char := range config.IntensiveCharacters {
+	intensiveCharacters := strings.ToUpper(config.IntensiveCharacters)
+	for _, char := range intensiveCharacters {
 		for _, morseCharacter := range morseCharacterTable {
 			if morseCharacter.character == char {
 				for i := 0; i < config.IntensiveFactor; i++ {

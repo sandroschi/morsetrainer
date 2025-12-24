@@ -10,7 +10,7 @@ Characters = "ACDEILNOQRSTUX4590="
 CharacterCount = 100
 
 # Für Intensiv-Training können hier Zeichen angegeben werden, die verstärkt geübt werden sollen
-IntensiveCharacters = "4U5S"
+IntensiveCharacters = "4U5SX="
 IntensiveFactor = 3
 
 # Ton Einstellungen
@@ -23,3 +23,5 @@ FadeInDuration = 5
 FadeOutDuration = 5
 FadeInDeadSamples = 300
 FadeOutDeadSamples = 300
+
+ShowTrainingDuration = true

@@ -24,6 +24,7 @@ type Config struct {
 	IntensiveCharacters    string
 	IntensiveFactor        int
 	PrintStatistics        bool
+	ShowTrainingDuration   bool
 }
 
 func read_config() Config {

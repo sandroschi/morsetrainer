@@ -23,6 +23,7 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 	var input string = "j"
+	var trainingDuration time.Duration = 0
 
 	var t float64
 	fadeOutDuration := time.Duration(float64(time.Millisecond) * config.FadeOutDuration)
@@ -33,6 +34,7 @@ func main() {
 	for input == "j" {
 		characters := morse.GetRandomCharacters(config.CharacterCount)
 		symbols := makeGroupsOfFive(characters)
+		trainingStart := time.Now()
 
 		// Debug clipping
 		// f, _ := os.Create("/tmp/yourfile")
@@ -124,7 +126,13 @@ func main() {
 			}
 		}
 
-		// Ask user if he want to another run
+		// Total training time
+		trainingDuration = trainingDuration + time.Since(trainingStart)
+		if config.ShowTrainingDuration {
+			fmt.Println("Gesamte Übungszeit: " + HumanDuration(trainingDuration))
+		}
+
+		// Ask user if he wants another run
 		fmt.Print("Nochmal? (j/n): ")
 		input, _ = reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
