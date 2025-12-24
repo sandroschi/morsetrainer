@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"time"
@@ -64,30 +65,46 @@ var morseCharacterTable = []MorseCharacter{
 	{'0', []MorseSymbol{Dash, SymbolSpace, Dash, SymbolSpace, Dash, SymbolSpace, Dash, SymbolSpace, Dash}},
 	{'.', []MorseSymbol{Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash}},
 	{',', []MorseSymbol{Dash, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dash}},
+	{';', []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot}},
+	{':', []MorseSymbol{Dash, SymbolSpace, Dash, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dot}},
 	{'?', []MorseSymbol{Dot, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dot}},
+	{'!', []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dash}},
 	{'=', []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dash}},
+	{'/', []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot}},
+	{'-', []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dot, SymbolSpace, Dash}},
+	{'+', []MorseSymbol{Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot}},
 }
 
 func NewMorseCharacterPool(config Config) *MorseCharacterPool {
 	characters := strings.ToUpper(config.Characters)
 	pool := &MorseCharacterPool{}
 	for _, char := range characters {
+		found := false
 		for _, morseCharacter := range morseCharacterTable {
 			if morseCharacter.character == char {
 				pool.symbols = append(pool.symbols, morseCharacter)
+				found = true
 				break
 			}
+		}
+		if !found {
+			fmt.Println("Configured character not found: " + string(char))
 		}
 	}
 	intensiveCharacters := strings.ToUpper(config.IntensiveCharacters)
 	for _, char := range intensiveCharacters {
+		found := false
 		for _, morseCharacter := range morseCharacterTable {
 			if morseCharacter.character == char {
 				for i := 0; i < config.IntensiveFactor; i++ {
 					pool.symbols = append(pool.symbols, morseCharacter)
 				}
+				found = true
 				break
 			}
+		}
+		if !found {
+			fmt.Println("Configured intensive character not found: " + string(char))
 		}
 	}
 	return pool

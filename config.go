@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"os"
 
 	"github.com/BurntSushi/toml"
@@ -14,8 +15,6 @@ type Config struct {
 	Volume                 float64
 	FadeInDuration         float64
 	FadeOutDuration        float64
-	FadeInDeadSamples      int
-	FadeOutDeadSamples     int
 	SampleRate             float64
 	CharacterSpacingFactor float64
 	WordSpacingFactor      float64
@@ -29,9 +28,10 @@ type Config struct {
 }
 
 func read_config() Config {
-	file, err := os.Open("config.toml")
+	filename := "config.toml"
+	file, err := os.Open(filename)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could not open file: %s: %v", filename, err)
 	}
 	defer file.Close()
 
@@ -39,12 +39,12 @@ func read_config() Config {
 
 	b, err := io.ReadAll(file)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to read config file: %v", err)
 	}
 
 	err = toml.Unmarshal(b, &config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to parse config file: %v", err)
 	}
 
 	return config

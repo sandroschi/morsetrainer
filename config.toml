@@ -2,12 +2,13 @@
 WPM = 80
 
 # Faktor von 1.0 entspricht dem Standard. Zum Lernen kann der Abstand von Zeichen und Wörtern erhöht werden. Der Abstand innerhalb der Zeichen entspricht immer WPM.
+# Es werden Blöcke aus fünf Zeichen ausgegeben. WordSpacing gibt den Abstand zwischen den Blöcken an. CharacterSpacing den Abstand zwischen jedem Zeichen.
 CharacterSpacingFactor = 5
 WordSpacingFactor = 5
 
 # Zu benutzende Zeichen
 Characters = "ACDEILNOQRSTUX4590="
-CharacterCount = 1000
+CharacterCount = 100
 
 # Für Intensiv-Training können hier Zeichen angegeben werden, die verstärkt geübt werden sollen
 IntensiveCharacters = "4U5SX="
@@ -16,13 +17,11 @@ IntensiveFactor = 3
 # Ton Einstellungen
 Frequency1 = 700
 Frequency2 = 700
-Volume = 0.8
+Volume = 1.0
 SampleRate = 44100
 # In Millisekunden
 FadeInDuration = 5
 FadeOutDuration = 5
-FadeInDeadSamples = 300
-FadeOutDeadSamples = 300
 
+# Zusätzliche Information
 ShowTrainingDuration = true
-DebugWaveForm = true
