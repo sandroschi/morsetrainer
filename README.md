@@ -4,6 +4,8 @@ Es gibt schier unendlich viele Programme, die einem dabei helfen sollen Morsen z
 ## Verwendung
 Es ist ein Konsolenprogramm, also gerne in der Konsole starten. Es werden keine Parameter unterstützt. Alle Einstellungen sind in der config.toml zu tätigen, die im gleichen Verzeichnis wie die Executable liegen muss.
 
+![Verwendungsbeispiel](screenshot.png)
+
 ## Funktionen
 Die Applikation stellt im wesentlichen die folgenden Funktionen zur Verfügung, die ich in absteigender Reihenfolge bei anderen Programmen vermisst habe.
 
@@ -11,6 +13,7 @@ Die Applikation stellt im wesentlichen die folgenden Funktionen zur Verfügung, 
 - Benutzer kann verwendete Zeichen selbst auswählen
 - Es können bestimmte Zeichen intensiv geübt werden. Diese kommen häufiger vor.
 - Einstellung der Geschwindigkeit und Abstände
+- Die aktive Übungsdauer wird angezeigt und kann mit den persönlichen Zielen abgeglichen werden
 - Frequenz kann (auch für Dit und Dah separat) eingestellt werden
 
 ### Hintergrund
