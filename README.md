@@ -2,7 +2,7 @@
 Es gibt schier unendlich viele Programme, die einem dabei helfen sollen Morsen zu lernen. Jetzt ist es noch eins mehr.
 
 ## Installation
-Wenn man nicht selbst kompilieren möchte, dann [hier](https://github.com/sandroschi/morsetrainer/releases) die aktuelle Version für Windows (ungetestet) oder Linux herunterladen. Eine richtige Installation ist nicht erforderlich. Es wird nur die ausführbare Datei und die config.toml in einem Ordner mit Leserechten benötigt.
+Wenn man nicht selbst kompilieren möchte, dann [hier](https://github.com/sandroschi/morsetrainer/releases) die aktuelle Version für Windows (ungetestet) oder Linux herunterladen und entpacken. Eine richtige Installation ist nicht erforderlich. Es wird nur die ausführbare Datei und die config.toml in einem Ordner mit Leserechten benötigt.
 
 ## Verwendung
 Es ist ein Konsolenprogramm, also gerne in der Konsole starten. Es werden keine Parameter unterstützt. Alle Einstellungen sind in der config.toml zu tätigen, die im gleichen Verzeichnis wie die Executable liegen muss.
@@ -15,7 +15,7 @@ Die Applikation stellt im wesentlichen die folgenden Funktionen zur Verfügung, 
 - Es werden eine einstellbare Anzahl an Zeichen in fünfer Blöcken ausgegeben. Man soll sie auf Papier mitschreiben. Erst am Ende werden die Zeichen auf dem Bildschirm angezeigt zum Vergleichen.
 - Benutzer kann verwendete Zeichen selbst auswählen
 - Es können bestimmte Zeichen intensiv geübt werden. Diese kommen häufiger vor.
-- Einstellung der Geschwindigkeit und Abstände
+- Einstellung der Geschwindigkeit und Abstände. Zufällig positionierte Variante der Abstände möglich.
 - Die aktive Übungsdauer wird angezeigt und kann mit den persönlichen Zielen abgeglichen werden
 - Frequenz kann (auch für Dit und Dah separat) eingestellt werden
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -28,10 +29,13 @@ func sample(symbols []MorseSymbol, config Config) []byte {
 	}()
 	dotWritten := false
 
+	// Variant position
+	var startVariant int64 = rand.Int63n(int64(float64(len(symbols)) * (100.0 - config.VariantTransition*2 - config.VariantWidth)/100.0))
+
 	// Get total length in microseconds
 	var totalLength int64 = 0
-	for _, symbol := range symbols {
-		symbolLength := getSymbolLength(symbol, config)
+	for symbolIndex, symbol := range symbols {
+		symbolLength := getSymbolLengthWithVariant(symbol, config, int64(symbolIndex), int64(len(symbols)), startVariant)
 		totalLength += symbolLength.Microseconds()
 	}
 	// Total length in samples
@@ -40,8 +44,8 @@ func sample(symbols []MorseSymbol, config Config) []byte {
 	var bufferIndex int64 = 0
 
 	// Write all samples to buffer
-	for _, symbol := range symbols {
-		symbolLength := getSymbolLength(symbol, config)
+	for symbolIndex, symbol := range symbols {
+		symbolLength := getSymbolLengthWithVariant(symbol, config, int64(symbolIndex), int64(len(symbols)), startVariant)
 		samplesToWrite := int(config.SampleRate * float64(symbolLength) / float64(time.Second))
 		t := 0.0
 		sample := 0.0

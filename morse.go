@@ -148,9 +148,41 @@ func makeGroupsOfFive(characters []MorseCharacter) []MorseSymbol {
 	return result
 }
 
-func getSymbolLength(symbol MorseSymbol, config Config) time.Duration {
+func getSymbolLengthWithVariant(symbol MorseSymbol, config Config, currentNum int64, maxNum int64, positionStart int64) time.Duration {
+	var characterSpacingFactor float64 = 1.0
+	var wordSpacingFactor float64 = 1.0
+
+	// Speed curve example: ____..------..___
+	lengthTransition := int64(float64(maxNum) * config.VariantTransition / 100.0)
+	lengthVariant := int64(float64(maxNum) * config.VariantWidth / 100.0)
+	startRising := positionStart
+	startVariant := startRising + lengthTransition
+	startFalling := startVariant + lengthVariant
+	endFalling := startFalling + lengthTransition
+
+	if currentNum > endFalling {
+		characterSpacingFactor = config.CharacterSpacingFactor
+		wordSpacingFactor = config.WordSpacingFactor
+	} else if currentNum >= startFalling {
+		characterSpacingFactor = config.CharacterSpacingFactor + (config.VariantCharacterSpacingFactor-config.CharacterSpacingFactor)*((float64(endFalling)-float64(startFalling))-(float64(currentNum)-float64(startFalling)))/(float64(endFalling)-float64(startFalling))
+		wordSpacingFactor = config.WordSpacingFactor + (config.VariantWordSpacingFactor-config.WordSpacingFactor)*((float64(endFalling)-float64(startFalling))-(float64(currentNum)-float64(startFalling)))/(float64(endFalling)-float64(startFalling))
+	} else if currentNum >= startVariant {
+		characterSpacingFactor = config.VariantCharacterSpacingFactor
+		wordSpacingFactor = config.VariantWordSpacingFactor
+	} else if currentNum >= startRising {
+		characterSpacingFactor = config.CharacterSpacingFactor + (config.VariantCharacterSpacingFactor-config.CharacterSpacingFactor)*(float64(currentNum)-float64(startRising))/(float64(startVariant)-float64(startRising))
+		wordSpacingFactor = config.WordSpacingFactor + (config.VariantWordSpacingFactor-config.WordSpacingFactor)*(float64(currentNum)-float64(startRising))/(float64(startVariant)-float64(startRising))
+	} else {
+		characterSpacingFactor = config.CharacterSpacingFactor
+		wordSpacingFactor = config.WordSpacingFactor
+	}
+
+	return getSymbolLength(symbol, float64(config.WPM), characterSpacingFactor, wordSpacingFactor)
+}
+
+func getSymbolLength(symbol MorseSymbol, wpm float64, characterSpacingFactor float64, wordSpacingFactor float64) time.Duration {
 	// WPM 60 entspricht 0.1s
-	time_dot := time.Duration(float64(time.Second) * 6 / float64(config.WPM))
+	time_dot := time.Duration(float64(time.Second) * 6 / wpm)
 
 	switch symbol {
 	case Dot:
@@ -160,9 +192,9 @@ func getSymbolLength(symbol MorseSymbol, config Config) time.Duration {
 	case SymbolSpace:
 		return time_dot
 	case LetterSpace:
-		return time.Duration(float64(time_dot) * 3 * config.CharacterSpacingFactor)
+		return time.Duration(float64(time_dot) * 3 * characterSpacingFactor)
 	case WordSpace:
-		return time.Duration(float64(time_dot) * 7 * config.WordSpacingFactor)
+		return time.Duration(float64(time_dot) * 7 * wordSpacingFactor)
 	default:
 		return 0
 	}

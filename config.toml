@@ -1,10 +1,20 @@
 # Geschwindigkeit - nicht kleiner 80 stellen, sonst zählt man zu viel mit
 WPM = 80
 
-# Faktor von 1.0 entspricht dem Standard. Zum Lernen kann der Abstand von Zeichen und Wörtern erhöht werden. Der Abstand innerhalb der Zeichen entspricht immer WPM.
-# Es werden Blöcke aus fünf Zeichen ausgegeben. WordSpacing gibt den Abstand zwischen den Blöcken an. CharacterSpacing den Abstand zwischen jedem Zeichen.
+# Faktor von 1.0 entspricht dem Standard. Zum Lernen kann der Abstand von Zeichen und Wörtern erhöht werden. 
+# Der Abstand innerhalb der Zeichen entspricht immer WPM. Es werden Blöcke aus fünf Zeichen ausgegeben. 
+# WordSpacing gibt den Abstand zwischen den Blöcken an. CharacterSpacing den Abstand zwischen jedem Zeichen.
 CharacterSpacingFactor = 5
 WordSpacingFactor = 5
+
+# Um es interessanter zu gestalten, kann man hiermit zum Beispiel einen schnelleren Abschnitt erzeugen.
+# VariantWidth gibt an wie viel Prozent der gesamten Symbole die hier genannten Abstandsfaktoren benutzen
+# sollen. VariantTransition gibt an wie viel Prozent der gesamten Symbole jeweils für den Übergang 
+# genutzt werden. Die Position des schnelleren Teils wird zufällig bestimmt.
+VariantWidth=20
+VariantTransition=5
+VariantCharacterSpacingFactor = 3
+VariantWordSpacingFactor = 3
 
 # Zu benutzende Zeichen
 Characters = "ACDEILNOQRSTUX4590="

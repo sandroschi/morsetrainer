@@ -9,22 +9,26 @@ import (
 )
 
 type Config struct {
-	WPM                    int
-	Frequency1             float64
-	Frequency2             float64
-	Volume                 float64
-	FadeInDuration         float64
-	FadeOutDuration        float64
-	SampleRate             float64
-	CharacterSpacingFactor float64
-	WordSpacingFactor      float64
-	Characters             string
-	CharacterCount         int
-	IntensiveCharacters    string
-	IntensiveFactor        int
-	PrintStatistics        bool
-	ShowTrainingDuration   bool
-	DebugWaveForm          bool
+	WPM                           int
+	Frequency1                    float64
+	Frequency2                    float64
+	Volume                        float64
+	FadeInDuration                float64
+	FadeOutDuration               float64
+	SampleRate                    float64
+	CharacterSpacingFactor        float64
+	WordSpacingFactor             float64
+	VariantWidth                  float64
+	VariantTransition             float64
+	VariantCharacterSpacingFactor float64
+	VariantWordSpacingFactor      float64
+	Characters                    string
+	CharacterCount                int
+	IntensiveCharacters           string
+	IntensiveFactor               int
+	PrintStatistics               bool
+	ShowTrainingDuration          bool
+	DebugWaveForm                 bool
 }
 
 func read_config() Config {
