@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"log"
+	"math/big"
 	"strings"
 	"time"
 )
@@ -114,8 +116,11 @@ func (pool *MorseCharacterPool) GetRandomCharacter() MorseCharacter {
 	if len(pool.symbols) == 0 {
 		return MorseCharacter{}
 	}
-	index := rand.Int31n((int32)(len(pool.symbols)))
-	return pool.symbols[index]
+	index, err := rand.Int(rand.Reader, big.NewInt(int64(len(pool.symbols))))
+	if err != nil {
+		log.Fatalf("Failed to generate random index for character pool: %v", err)
+	}
+	return pool.symbols[index.Int64()]
 }
 
 func (pool *MorseCharacterPool) GetRandomCharacters(count int) []MorseCharacter {
