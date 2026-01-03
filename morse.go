@@ -168,13 +168,13 @@ func getSymbolLengthWithVariant(symbol MorseSymbol, config Config, currentNum in
 	if currentNum > endFalling {
 		characterSpacingFactor = config.CharacterSpacingFactor
 		wordSpacingFactor = config.WordSpacingFactor
-	} else if currentNum >= startFalling {
+	} else if currentNum >= startFalling && startFalling != endFalling {
 		characterSpacingFactor = config.CharacterSpacingFactor + (config.VariantCharacterSpacingFactor-config.CharacterSpacingFactor)*((float64(endFalling)-float64(startFalling))-(float64(currentNum)-float64(startFalling)))/(float64(endFalling)-float64(startFalling))
 		wordSpacingFactor = config.WordSpacingFactor + (config.VariantWordSpacingFactor-config.WordSpacingFactor)*((float64(endFalling)-float64(startFalling))-(float64(currentNum)-float64(startFalling)))/(float64(endFalling)-float64(startFalling))
 	} else if currentNum >= startVariant {
 		characterSpacingFactor = config.VariantCharacterSpacingFactor
 		wordSpacingFactor = config.VariantWordSpacingFactor
-	} else if currentNum >= startRising {
+	} else if currentNum >= startRising && startRising != startVariant {
 		characterSpacingFactor = config.CharacterSpacingFactor + (config.VariantCharacterSpacingFactor-config.CharacterSpacingFactor)*(float64(currentNum)-float64(startRising))/(float64(startVariant)-float64(startRising))
 		wordSpacingFactor = config.WordSpacingFactor + (config.VariantWordSpacingFactor-config.WordSpacingFactor)*(float64(currentNum)-float64(startRising))/(float64(startVariant)-float64(startRising))
 	} else {
