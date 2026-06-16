@@ -26,6 +26,7 @@ type Config struct {
 	CharacterCount                int
 	IntensiveCharacters           string
 	IntensiveFactor               int
+	WordRepeat int
 	PrintStatistics               bool
 	ShowTrainingDuration          bool
 	DebugWaveForm                 bool

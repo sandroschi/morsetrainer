@@ -1,34 +1,38 @@
 # Geschwindigkeit - nicht kleiner 80 stellen, sonst zählt man zu viel mit
-WPM = 100
+WPM = 95
 
 # Faktor von 1.0 entspricht dem Standard. Zum Lernen kann der Abstand von Zeichen und Wörtern erhöht werden. 
 # Der Abstand innerhalb der Zeichen entspricht immer WPM. Es werden Blöcke aus fünf Zeichen ausgegeben. 
 # WordSpacing gibt den Abstand zwischen den Blöcken an. CharacterSpacing den Abstand zwischen jedem Zeichen.
-CharacterSpacingFactor = 5
+CharacterSpacingFactor = 1
 WordSpacingFactor = 5
+
+# Anzahl an Wiederholungen. Wenn nicht gewünscht, dann auf 0 setzen.
+WordRepeat = 1
 
 # Um es interessanter zu gestalten, kann man hiermit zum Beispiel einen schnelleren Abschnitt erzeugen.
 # VariantWidth gibt an wie viel Prozent der gesamten Symbole die hier genannten Abstandsfaktoren benutzen
 # sollen. VariantTransition gibt an wie viel Prozent der gesamten Symbole jeweils für den Übergang 
 # genutzt werden. Die Position des schnelleren Teils wird zufällig bestimmt.
-VariantWidth=20
-VariantTransition=5
-VariantCharacterSpacingFactor = 3
-VariantWordSpacingFactor = 3
+#VariantWidth=20
+#VariantTransition=5
+VariantCharacterSpacingFactor = 3.0
+VariantWordSpacingFactor = 3.0
 
 # Zu benutzende Zeichen
-Characters = "ACDEILNOQRSTUX4590="
-CharacterCount = 100
+Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890=.?,/"
+#Characters = "V4"
+CharacterCount = 20
 
 # Für Intensiv-Training können hier Zeichen angegeben werden, die verstärkt geübt werden sollen.
 # Ein Faktor von 2 gibt vor, dass diese Zeichen doppelt so häufig vorkommen sollen wie üblich.
-IntensiveCharacters = "X="
-IntensiveFactor = 2
+#IntensiveCharacters = "PBW"
+IntensiveFactor = 3
 
 # Ton Einstellungen
 Frequency1 = 700
 Frequency2 = 700
-Volume = 1.0
+Volume = 0.8
 SampleRate = 44100
 # In Millisekunden
 FadeInDuration = 5

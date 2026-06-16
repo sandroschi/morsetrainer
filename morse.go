@@ -131,19 +131,34 @@ func (pool *MorseCharacterPool) GetRandomCharacters(count int) []MorseCharacter 
 	return symbols
 }
 
-func makeGroupsOfFive(characters []MorseCharacter) []MorseSymbol {
+func makeGroupsOfFive(characters []MorseCharacter, wordRepeat int) []MorseSymbol {
 	var result []MorseSymbol
 
 	// Start sequence: -.-.-
 	result = append(result, []MorseSymbol{Dash, SymbolSpace, Dot, SymbolSpace, Dash, SymbolSpace, Dot, SymbolSpace, Dash, WordSpace}...)
 
+	repeatedCharacters := make([]MorseSymbol, 0)
+
 	for i, char := range characters {
 		if i > 0 && (i+1)%5 == 0 {
 			result = append(result, char.symbols...)
 			result = append(result, WordSpace)
+
+			repeatedCharacters = append(repeatedCharacters, char.symbols...)
+			repeatedCharacters = append(repeatedCharacters, WordSpace)
 		} else {
 			result = append(result, char.symbols...)
 			result = append(result, LetterSpace)
+
+			repeatedCharacters = append(repeatedCharacters, char.symbols...)
+			repeatedCharacters = append(repeatedCharacters, LetterSpace)
+		}
+
+		if (i+1)%5 == 0 {
+			for j := 0; j < wordRepeat; j++ {
+				result = append(result, repeatedCharacters...)
+			}
+			repeatedCharacters = make([]MorseSymbol, 0)
 		}
 	}
 

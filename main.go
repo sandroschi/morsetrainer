@@ -17,7 +17,7 @@ func main() {
 	var morse = NewMorseCharacterPool(config)
 
 	// Prepare sound output
-	ctx, _ := oto.NewContext((int)(config.SampleRate), 1, 2, 0)
+	ctx, _ := oto.NewContext((int)(config.SampleRate), 1, 2, 1024) // früher war Buffer auf 0.
 	player := ctx.NewPlayer()
 	defer player.Close()
 
@@ -29,7 +29,7 @@ func main() {
 	for input == "j" { // User wants training
 		// Generate random characters and convert them to morse symbols
 		characters := morse.GetRandomCharacters(config.CharacterCount)
-		symbols := makeGroupsOfFive(characters)
+		symbols := makeGroupsOfFive(characters, config.WordRepeat)
 
 		// Generate sound samples
 		buffer := sample(symbols, config)
