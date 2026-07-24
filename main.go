@@ -28,22 +28,26 @@ func main() {
 
 	for input == "j" { // User wants training
 		// Generate random characters and convert them to morse symbols
-		characters := morse.GetRandomCharacters(config.CharacterCount)
-		symbols := makeGroupsOfFive(characters, config.WordRepeat)
+		characters := morse.GetRandomCharacters(config.CharacterCount, config.WordLengthMin, config.WordLengthMax)
+		symbols := makeMorseSymbols(characters, config.WordRepeat)
 
 		// Generate sound samples
 		buffer := sample(symbols, config)
 
 		// Play sound to speaker
 		trainingStart := time.Now()
-		player.Write(buffer) // Blocks until rest of buffer fits into internal buffer (size=0)
+		if !config.NoSound {
+			player.Write(buffer) // Blocks until rest of buffer fits into internal buffer (size=0)
+		}
 
 		// Print characters to console for comparison
-		for i, char := range characters {
-			print((strings.ToLower(string(char.character))))
-			if i > 0 && (i+1)%5 == 0 {
-				print(" ")
+		for _, char := range characters {
+			if char.character != '^' {
+				print((strings.ToLower(string(char.character))))
 			}
+			//if i > 0 && (i+1)%5 == 0 {
+			//	print(" ")
+			//}
 		}
 		println()
 
@@ -61,7 +65,7 @@ func main() {
 
 		// Total training time
 		trainingDuration = trainingDuration + time.Since(trainingStart)
-		if config.ShowTrainingDuration {
+		if config.ShowTrainingDuration && !config.NoSound {
 			fmt.Println("Gesamte Übungszeit: " + HumanDuration(trainingDuration))
 		}
 

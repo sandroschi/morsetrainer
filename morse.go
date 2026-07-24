@@ -123,15 +123,29 @@ func (pool *MorseCharacterPool) GetRandomCharacter() MorseCharacter {
 	return pool.symbols[index.Int64()]
 }
 
-func (pool *MorseCharacterPool) GetRandomCharacters(count int) []MorseCharacter {
-	symbols := make([]MorseCharacter, count)
+func (pool *MorseCharacterPool) GetRandomCharacters(count int, wordLengthMin int, wordLengthMax int) []MorseCharacter {
+	symbols := make([]MorseCharacter, 0)
+	wordLength := 0
 	for i := 0; i < count; i++ {
-		symbols[i] = pool.GetRandomCharacter()
+		if wordLength == 0 {
+			wordLength = wordLengthMin + int(time.Now().UnixNano()%int64(wordLengthMax-wordLengthMin+1))
+		}
+		wordLength--
+
+		symbols = append(symbols, pool.GetRandomCharacter())
+
+		if wordLength == 0 || i == count-1 {
+			count++
+			i++
+			symbols = append(symbols, MorseCharacter{character: ' ', symbols: []MorseSymbol{WordSpace}})
+		} else {
+			symbols = append(symbols, MorseCharacter{character: '^', symbols: []MorseSymbol{LetterSpace}})
+		}
 	}
 	return symbols
 }
 
-func makeGroupsOfFive(characters []MorseCharacter, wordRepeat int) []MorseSymbol {
+func makeMorseSymbols(characters []MorseCharacter, wordRepeat int) []MorseSymbol {
 	var result []MorseSymbol
 
 	// Start sequence: -.-.-
@@ -139,22 +153,11 @@ func makeGroupsOfFive(characters []MorseCharacter, wordRepeat int) []MorseSymbol
 
 	repeatedCharacters := make([]MorseSymbol, 0)
 
-	for i, char := range characters {
-		if i > 0 && (i+1)%5 == 0 {
-			result = append(result, char.symbols...)
-			result = append(result, WordSpace)
+	for _, char := range characters {
+		result = append(result, char.symbols...)
+		repeatedCharacters = append(repeatedCharacters, char.symbols...)
 
-			repeatedCharacters = append(repeatedCharacters, char.symbols...)
-			repeatedCharacters = append(repeatedCharacters, WordSpace)
-		} else {
-			result = append(result, char.symbols...)
-			result = append(result, LetterSpace)
-
-			repeatedCharacters = append(repeatedCharacters, char.symbols...)
-			repeatedCharacters = append(repeatedCharacters, LetterSpace)
-		}
-
-		if (i+1)%5 == 0 {
+		if char.character == ' ' {
 			for j := 0; j < wordRepeat; j++ {
 				result = append(result, repeatedCharacters...)
 			}
