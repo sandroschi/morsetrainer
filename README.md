@@ -12,7 +12,7 @@ Es ist ein Konsolenprogramm, also gerne in der Konsole starten. Es werden keine 
 ## Funktionen
 Die Applikation stellt im wesentlichen die folgenden Funktionen zur Verfügung, die ich in absteigender Reihenfolge bei anderen Programmen vermisst habe.
 
-- Es werden eine einstellbare Anzahl an Zeichen in fünfer Blöcken ausgegeben. Man soll sie auf Papier mitschreiben. Erst am Ende werden die Zeichen auf dem Bildschirm angezeigt zum Vergleichen.
+- Es werden eine einstellbare Anzahl an Zeichen in variabel langen Blöcken ausgegeben. Man soll sie auf Papier mitschreiben. Erst am Ende werden die Zeichen auf dem Bildschirm angezeigt zum Vergleichen.
 - Benutzer kann verwendete Zeichen selbst auswählen
 - Es können bestimmte Zeichen intensiv geübt werden. Diese kommen häufiger vor.
 - Einstellung der Geschwindigkeit und Abstände. Zufällig positionierte Variante der Abstände möglich.
